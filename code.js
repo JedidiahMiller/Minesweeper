@@ -47,21 +47,26 @@ function populateGrid(xWidth, yWidth) {
 // Game mechanics
 
 const area = xWidth*yWidth;
-const bombCount = area/10;
+const bombCount = MATH.floor(area/10);
 
-const gridLayout = [];
+createBombGrid(xWidth, yWidth, bombCount)
 
-for(let i = 0; i<yWidth; i++) {
+function createBombGrid(width, height, bombRatio) {
 
-    const row = [];
+    const gridLayout = [];
 
-    for(let x = 0; x<xWidth; x++) {
+    for(let i = 0; i<height; i++) {
 
-        row[x] = ((Math.floor(Math.random() * oneIn)) == 1);
+        const row = [];
+
+        for(let x = 0; x<width; x++) {
+
+            row[x] = ((Math.floor(Math.random() * bombRatio)) == 1);
+
+        }
+
+        gridLayout[i] = row;
 
     }
-
-    gridLayout[i] = row;
-
 }
 
