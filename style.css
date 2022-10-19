@@ -1,8 +1,20 @@
 
 
+#controlPanel {
+    width: 80%;
+    border: solid 10px darkred;
+    margin: auto;
+}
+
+#titleSplash #controls {
+    border: solid 1px darkred;
+}
+
+
+
 .blockItem {
     background-color: red;
-    border: solid 5px darkred;
+    border: solid 1px darkred;
     flex-grow: 1;
 }
 
@@ -21,5 +33,8 @@
     height: 700px;
     width: 80%;
     margin: auto;
+    border: solid 10px darkred;
+    border-radius: 10px;
 }
+
 
