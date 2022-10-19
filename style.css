@@ -1,18 +1,25 @@
 
-td {
 
-    background-color: greenyellow;
-    border: 5px solid black;
-    
-    width: 50px;
-    height: 50px;
-
-
+.blockItem {
+    background-color: red;
+    border: solid 5px darkred;
+    flex-grow: 1;
 }
 
-table {
-    margin: auto;
-    border-spacing: 0px;
+.blockItem:hover {
+    background-color: rgb(194, 2, 2);
+}
+
+.row {
+    display: flex;
+    flex-grow: 1;
+}
+
+#allRows {
+    display: flex;
+    flex-direction: column;
+    height: 700px;
     width: 80%;
-    height: 300px;
+    margin: auto;
 }
+
