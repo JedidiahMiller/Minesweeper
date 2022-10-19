@@ -1,4 +1,8 @@
 
+# Artifact from origional hard coded grid 
+# This would be used to generate code for the grid
+# which would just be copy pasted into the html
+
 
 x = 20
 y = 20
