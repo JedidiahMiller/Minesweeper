@@ -28,8 +28,23 @@ function populateGrid(xWidth, yWidth) {
             block.setAttribute("id", x + "/" + y);
             block.classList.add("block", "untouchedBlock")
 
+            // regular click
             block.onclick = function clickAction() {console.log(x + "/" + y); tileClick(x, y);}
 
+            // right click
+            block.oncontextmenu = function() {
+
+                if(block.classList.contains("untouchedBlock")) {
+
+                    block.classList.remove("untouchedBlock");
+                    block.classList.add("flaggedBlock");
+                    
+                }
+                
+                return false;
+            }
+
+            
             row.appendChild(block);
 
         }
@@ -116,13 +131,23 @@ function ajacentBombCount(x, y) {
 function tileClick(x, y) {
 
     clickedBlock = document.getElementById(x + "/" + y);
-    clickedBlock.classList.remove("untouchedBlock");
 
-    if(gridLayout[y][x]) {
-        clickedBlock.classList.add("bombBlock");
-    } else {
-        clickedBlock.classList.add("emptyBlock");
+    if(clickedBlock.classList.contains("untouchedBlock")) {
+        
+        clickedBlock.classList.remove("untouchedBlock");
+
+        if(gridLayout[y][x]) {
+
+            clickedBlock.classList.add("bombBlock");
+
+        } else {
+
+            clickedBlock.classList.add("emptyBlock");
+
+        }
+
     }
+    
 
     
     
