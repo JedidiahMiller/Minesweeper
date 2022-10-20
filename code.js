@@ -4,7 +4,7 @@
 const xWidth = 20, yWidth = 20;
 
 // Bad variable name
-const oneIn = 10;
+const bombFrequency = 5;
 
 // Run setup function
 populateGrid(xWidth, yWidth);
@@ -20,15 +20,15 @@ function populateGrid(xWidth, yWidth) {
 
         const row = document.createElement("div");
         row.setAttribute("id", "row"+y);
-        row.setAttribute("class", "row");
+        row.classList.add("row");
 
         for(let x=0; x<xWidth; x++) {
 
             const block = document.createElement("div");
             block.setAttribute("id", x + "/" + y);
-            block.setAttribute("class", "blockItem");
+            block.classList.add("block", "untouchedBlock")
 
-            block.onclick = // On block click function
+            block.onclick = function clickAction() {console.log(x + "/" + y); tileClick(x, y);}
 
             row.appendChild(block);
 
@@ -47,10 +47,11 @@ function populateGrid(xWidth, yWidth) {
 // Game mechanics
 
 const area = xWidth*yWidth;
-const bombCount = MATH.floor(area/10);
+const bombCount = Math.floor(area/10);
 
-createBombGrid(xWidth, yWidth, bombCount)
+gridLayout = createBombGrid(xWidth, yWidth, bombCount);
 
+// Populate grid data
 function createBombGrid(width, height, bombRatio) {
 
     const gridLayout = [];
@@ -61,12 +62,68 @@ function createBombGrid(width, height, bombRatio) {
 
         for(let x = 0; x<width; x++) {
 
-            row[x] = ((Math.floor(Math.random() * bombRatio)) == 1);
+            row[x] = (Math.floor(Math.random()*bombFrequency) == 0);
 
         }
 
         gridLayout[i] = row;
 
     }
+
+    return gridLayout;
+
 }
 
+// Count bombs
+function ajacentBombCount(x, y) {
+
+    count = 0
+
+    // sides
+    if((y != 0)&&(gridLayout[y-1][x])) {
+        count += 1;
+    }
+    if((x != (xWidth-1))&&(gridLayout[y][x+1])) {
+        count += 1;
+    }
+    if((y != (yWidth-1))&&(gridLayout[y+1][x])) {
+        count += 1;
+    }
+    if((x != 0)&&(gridLayout[y][x-1])) {
+        count += 1;
+    }
+
+    // corners
+    if((y != 0)&&(x != (xWidth-1))&&(gridLayout[y-1][x+1])) {
+        count += 1;
+    }
+    if((x != (xWidth-1))&&(y != (yWidth-1))&&(gridLayout[y+1][x+1])) {
+        count += 1;
+    }
+    if((y != (yWidth-1))&&(x != 0)&&(gridLayout[y+1][x-1])) {
+        count += 1;
+    }
+    if((x != 0)&&(y != 0)&&(gridLayout[y-1][x-1])) {
+        count += 1;
+    }
+    
+    return count;
+
+}
+
+// Gameplay
+
+function tileClick(x, y) {
+
+    clickedBlock = document.getElementById(x + "/" + y);
+    clickedBlock.classList.remove("untouchedBlock");
+
+    if(gridLayout[y][x]) {
+        clickedBlock.classList.add("bombBlock");
+    } else {
+        clickedBlock.classList.add("emptyBlock");
+    }
+
+    
+    
+}

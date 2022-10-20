@@ -10,14 +10,29 @@
     border: solid 1px darkred;
 }
 
-.blockItem {
-    background-color: red;
-    border: solid 1px darkred;
+.block {
+    border: solid 1px black;
     flex-grow: 1;
 }
 
-.blockItem:hover {
-    background-color: rgb(194, 2, 2);
+.emptyBlock {
+    background-color: burlywood;
+}
+
+.untouchedBlock {
+    background-color: green;
+}
+
+.flaggedBlock {
+    
+}
+
+.bombBlock {
+    background-color: red;
+}
+
+.block:hover {
+    border: solid 1px greenyellow;
 }
 
 .row {
