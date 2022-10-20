@@ -13,14 +13,19 @@
 .block {
     border: solid 1px black;
     flex-grow: 1;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .emptyBlock {
-    background-color: burlywood;
+    background-color: rgb(153, 123, 84);
 }
 
 .untouchedBlock {
-    background-color: green;
+    /* background-color: green; */
+    background-image: none;
+
 }
 
 .flaggedBlock {
@@ -28,7 +33,7 @@
 }
 
 .bombBlock {
-    background-color: red;
+    background-image: url(Images/bomb.svg);
 }
 
 .block:hover {
@@ -48,6 +53,6 @@
     margin: auto;
     border: solid 10px darkred;
     border-radius: 10px;
+    background-color: green;
 }
-
 
