@@ -16,6 +16,11 @@
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 5%;
 }
 
 .emptyBlock {
@@ -43,6 +48,7 @@
 .row {
     display: flex;
     flex-grow: 1;
+    height: 5%;
 }
 
 #allRows {

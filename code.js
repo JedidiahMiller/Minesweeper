@@ -29,21 +29,10 @@ function populateGrid(xWidth, yWidth) {
             block.classList.add("block", "untouchedBlock")
 
             // regular click
-            block.onclick = function clickAction() {console.log(x + "/" + y); tileClick(x, y);}
+            block.onclick = function() { tileClick("left", x, y);}
 
             // right click
-            block.oncontextmenu = function() {
-
-                if(block.classList.contains("untouchedBlock")) {
-
-                    block.classList.remove("untouchedBlock");
-                    block.classList.add("flaggedBlock");
-                    
-                }
-                
-                return false;
-            }
-
+            block.oncontextmenu = function() { tileClick("right", x, y); return false;}
             
             row.appendChild(block);
 
@@ -128,27 +117,50 @@ function ajacentBombCount(x, y) {
 
 // Gameplay
 
-function tileClick(x, y) {
+function tileClick(clickType, x, y) {
 
     clickedBlock = document.getElementById(x + "/" + y);
 
+    // Check to make sure block hasnt already been touched
     if(clickedBlock.classList.contains("untouchedBlock")) {
         
-        clickedBlock.classList.remove("untouchedBlock");
+        // Left click
+        if(clickType == "left") {
+            clickedBlock.classList.remove("untouchedBlock");
 
-        if(gridLayout[y][x]) {
+            if(gridLayout[y][x]) {
 
-            clickedBlock.classList.add("bombBlock");
+                clickedBlock.classList.add("bombBlock");
 
-        } else {
+            } else {
 
-            clickedBlock.classList.add("emptyBlock");
+                clickedBlock.classList.add("emptyBlock");
+
+                ajacentBombs = ajacentBombCount(x, y);
+
+                if(ajacentBombs>0) {
+                    clickedBlock.innerHTML = ajacentBombs;
+                }
+                
+            }
+        // Right click
+        } else if(clickType == "right") {
+
+            if(clickedBlock.classList.contains("untouchedBlock")) {
+
+                clickedBlock.classList.remove("untouchedBlock");
+                clickedBlock.classList.add("flaggedBlock");
+
+            }
 
         }
+        
+    // Check if the clicked block has a flag, in which case it undoes the flag
+    } else if(clickedBlock.classList.contains("flaggedBlock")) {
+
+        clickedBlock.classList.add("untouchedBlock");
+        clickedBlock.classList.remove("flaggedBlock");
 
     }
-    
-
-    
     
 }
