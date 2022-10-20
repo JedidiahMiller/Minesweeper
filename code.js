@@ -4,7 +4,7 @@
 const xWidth = 20, yWidth = 20;
 
 // Bad variable name (Each block's chance to be a bomb is 1 in bombFrequency)
-const bombFrequency = 5;
+const bombFrequency = 8;
 
 // Run setup function
 populateGrid(xWidth, yWidth);
@@ -43,7 +43,6 @@ function populateGrid(xWidth, yWidth) {
     }   
 
     board = document.getElementById("board");
-    console.log(board);
     board.appendChild(allRows);
 
 }
@@ -53,7 +52,7 @@ function populateGrid(xWidth, yWidth) {
 const area = xWidth*yWidth;
 const bombCount = Math.floor(area/10);
 
-gridLayout = createBombGrid(xWidth, yWidth, bombCount);
+gridLayout = createBombGrid(xWidth, yWidth, bombFrequency);
 
 // Populate grid data
 function createBombGrid(width, height, bombRatio) {
@@ -119,6 +118,8 @@ function ajacentBombCount(x, y) {
 
 function tileClick(clickType, x, y) {
 
+    console.log(x + "/" + y);
+
     clickedBlock = document.getElementById(x + "/" + y);
 
     // Check to make sure block hasnt already been touched
@@ -153,11 +154,12 @@ function tileClick(clickType, x, y) {
     
 }
 
-// TODO: Create reveal block function
-
 function revealBlock(x, y) {
 
     block = document.getElementById(x + "/" + y);
+
+    // Prevents death loops when revealSurroundings is called and finds empty blocks
+    if(!block.classList.contains("untouchedBlock")) {return "alreadyHit"}
 
     block.classList.remove("untouchedBlock");
 
@@ -174,10 +176,46 @@ function revealBlock(x, y) {
 
         if(ajacentBombs>0) {
             block.innerHTML = ajacentBombs;
+        } else {
+            revealSurroundings(x, y);
         }
 
         return "none"
         
+    }
+}
+
+function revealSurroundings(x, y) {
+
+    // Often creates recursive loop with revealBlock().
+    // revealBlock() has code to prevent death loop
+
+    // sides
+    if(y != 0) {
+        revealBlock(x, y-1);
+    }
+    if(x != (xWidth-1)) {
+        revealBlock(x+1, y);
+    }
+    if(y != (yWidth-1)) {
+        revealBlock(x, y+1);
+    }
+    if(x != 0) {
+        revealBlock(x-1, y);
+    }
+
+    // corners
+    if((y != 0)&&(x != (xWidth-1))) {
+        revealBlock(x+1, y-1);
+    }
+    if((x != (xWidth-1))&&(y != (yWidth-1))) {
+        revealBlock(x+1, y+1);
+    }
+    if((y != (yWidth-1))&&(x != 0)) {
+        revealBlock(x-1, y+1);
+    }
+    if((x != 0)&&(y != 0)) {
+        revealBlock(x-1, y-1);
     }
 }
 
@@ -197,4 +235,22 @@ function revealBoard() {
         }
     }
 
+}
+
+// Control panel
+
+function resetGame() {
+    for(let y = 0; y < yWidth; y += 1) {
+        for(let x = 0; x < xWidth; x += 1) {
+
+            block = document.getElementById(x + "/" + y);
+
+            block.classList.remove("bombBlock");
+            block.classList.remove("emptyBlock");
+            block.innerHTML = "";
+
+            block.classList.add("untouchedBlock");
+            
+        }
+    }
 }

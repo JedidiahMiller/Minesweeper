@@ -4,6 +4,8 @@
     width: 80%;
     border: solid 10px darkred;
     margin: auto;
+    display: flex;
+    align-items: center;
 }
 
 #titleSplash #controls {
