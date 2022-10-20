@@ -3,7 +3,7 @@
 // 20x20
 const xWidth = 20, yWidth = 20;
 
-// Bad variable name
+// Bad variable name (Each block's chance to be a bomb is 1 in bombFrequency)
 const bombFrequency = 5;
 
 // Run setup function
@@ -126,23 +126,11 @@ function tileClick(clickType, x, y) {
         
         // Left click
         if(clickType == "left") {
-            clickedBlock.classList.remove("untouchedBlock");
-
-            if(gridLayout[y][x]) {
-
-                clickedBlock.classList.add("bombBlock");
-
-            } else {
-
-                clickedBlock.classList.add("emptyBlock");
-
-                ajacentBombs = ajacentBombCount(x, y);
-
-                if(ajacentBombs>0) {
-                    clickedBlock.innerHTML = ajacentBombs;
-                }
-                
+            
+            if(revealBlock(x, y) == "bomb") {
+                gameOver();
             }
+
         // Right click
         } else if(clickType == "right") {
 
@@ -163,4 +151,50 @@ function tileClick(clickType, x, y) {
 
     }
     
+}
+
+// TODO: Create reveal block function
+
+function revealBlock(x, y) {
+
+    block = document.getElementById(x + "/" + y);
+
+    block.classList.remove("untouchedBlock");
+
+    if(gridLayout[y][x]) {
+
+        block.classList.add("bombBlock");
+        return "bomb"
+
+    } else {
+
+        block.classList.add("emptyBlock");
+
+        ajacentBombs = ajacentBombCount(x, y);
+
+        if(ajacentBombs>0) {
+            block.innerHTML = ajacentBombs;
+        }
+
+        return "none"
+        
+    }
+}
+
+// Game over
+
+function gameOver() {
+
+    revealBoard()
+
+}
+
+function revealBoard() {
+    
+    for(let y = 0; y < yWidth; y += 1) {
+        for(let x = 0; x < xWidth; x += 1) {
+            revealBlock(x, y);
+        }
+    }
+
 }
