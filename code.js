@@ -3,6 +3,8 @@
 // 20x20
 const xWidth = 20, yWidth = 20;
 
+let gameRunning = true;
+
 // Bad variable name (Each block's chance to be a bomb is 1 in bombFrequency)
 const bombFrequency = 8;
 
@@ -10,7 +12,7 @@ const bombFrequency = 8;
 populateGrid(xWidth, yWidth);
 
 // Grid v2 uses flex box and divs
-
+// Populate grid assumes no residue grid elements
 function populateGrid(xWidth, yWidth) {
         
     allRows = document.createElement("div");
@@ -118,41 +120,52 @@ function ajacentBombCount(x, y) {
 
 function tileClick(clickType, x, y) {
 
-    console.log(x + "/" + y);
+    console.log(clickType + " click on " + x + "/" + y);
+
+    // If game isn't running, just ignore click
+    if(!gameRunning) {return;} 
 
     clickedBlock = document.getElementById(x + "/" + y);
 
-    // Check to make sure block hasnt already been touched
-    if(clickedBlock.classList.contains("untouchedBlock")) {
-        
-        // Left click
-        if(clickType == "left") {
-            
-            if(revealBlock(x, y) == "bomb") {
-                gameOver();
-            }
+    // Also ignore click if block is already revealed to be empty
+    if (clickedBlock.classList.contains("emptyBlock")) {
+        return;
+    }
 
-        // Right click
-        } else if(clickType == "right") {
+    // Bomb clicked
+    if ((clickType == "left") && gridLayout[y][x]) {
+        revealBlock(x, y);
+        gameOver()
+        return;
+    }
 
-            if(clickedBlock.classList.contains("untouchedBlock")) {
+    // Block flagged
+    if ((clickType == "right") && clickedBlock.classList.contains("untouchedBlock")) {
 
-                clickedBlock.classList.remove("untouchedBlock");
-                clickedBlock.classList.add("flaggedBlock");
+        clickedBlock.classList.remove("untouchedBlock");
+        clickedBlock.classList.add("flaggedBlock");
 
-            }
+        return;
+    }
 
-        }
-        
-    // Check if the clicked block has a flag, in which case it undoes the flag
-    } else if(clickedBlock.classList.contains("flaggedBlock")) {
+    // Show normal block
 
-        clickedBlock.classList.add("untouchedBlock");
+    if ((clickType == "left") && !gridLayout[y][x]) {
+        revealBlock(x, y);
+        return;
+    }
+
+    // Remove flag
+    if (clickedBlock.classList.contains("flaggedBlock")) {
+
         clickedBlock.classList.remove("flaggedBlock");
+        clickedBlock.classList.add("untouchedBlock");
 
     }
-    
+
 }
+
+
 
 function revealBlock(x, y) {
 
@@ -160,6 +173,7 @@ function revealBlock(x, y) {
 
     // Prevents death loops when revealSurroundings is called and finds empty blocks
     if(!block.classList.contains("untouchedBlock")) {return "alreadyHit"}
+    runSurroundings = block.classList.contains("untouchedBlock");
 
     block.classList.remove("untouchedBlock");
 
@@ -177,7 +191,9 @@ function revealBlock(x, y) {
         if(ajacentBombs>0) {
             block.innerHTML = ajacentBombs;
         } else {
-            revealSurroundings(x, y);
+            if (runSurroundings) {
+                revealSurroundings(x, y);
+            }
         }
 
         return "none"
@@ -247,6 +263,7 @@ function resetGame() {
 
             block.classList.remove("bombBlock");
             block.classList.remove("emptyBlock");
+            block.classList.remove("flaggedBlock");
             block.innerHTML = "";
 
             block.classList.add("untouchedBlock");
