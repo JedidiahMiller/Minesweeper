@@ -2,7 +2,7 @@
 // Globals
 
 // 20x20
-const xWidth = 20, yWidth = 20;
+const xWidth = 5, yWidth = 5;
 let gameRunning = true;
 let firstClick = true;
 
@@ -11,8 +11,7 @@ const bombFrequency = 6;
 
 // Grid data (Not fully tested/implemented)
 let bombCount = 0;
-let flaggedSpots = 0;
-let uncoveredSpots = 0;
+let unmarkedSpots = xWidth * yWidth;
 
 // Run setup function (For default setup)
 populateGrid(xWidth, yWidth);
@@ -124,9 +123,18 @@ function ajacentBombCount(x, y) {
 
 // Gameplay
 
+function updateGame() {
+
+    console.log(unmarkedSpots + " spots left");
+    if(unmarkedSpots == 0) {
+        gameOver();
+    }
+
+}
+
 // Void function
 function tileClick(clickType, x, y) {
-
+    updateGame();
     console.log(clickType + " click on " + x + "/" + y);
 
     // If game isn't running, just ignore click
@@ -145,11 +153,12 @@ function tileClick(clickType, x, y) {
         clickedBlock.classList.remove("flaggedBlock");
         clickedBlock.classList.add("untouchedBlock");
 
-        flaggedSpots -= 1;
+        unmarkedSpots += 1;
+        updateGame();
 
         console.log("Removed flag");
         return;
-    }
+    } 
 
     // First click
     if ((clickType == "left") && (firstClick)) {
@@ -165,7 +174,7 @@ function tileClick(clickType, x, y) {
     // Bomb clicked
     if ((clickType == "left") && gridLayout[y][x]) {
         revealBlock(x, y);
-        gameOver()
+        gameOver();
 
         console.log("Bomb hit");
         return;
@@ -177,7 +186,9 @@ function tileClick(clickType, x, y) {
         clickedBlock.classList.remove("untouchedBlock");
         clickedBlock.classList.add("flaggedBlock");
 
-        flaggedSpots += 1;
+        unmarkedSpots -= 1;
+
+        updateGame();
 
         console.log("flag placed");
         return;
@@ -194,6 +205,7 @@ function tileClick(clickType, x, y) {
 
 }
 
+// Clear just means in a memory sense. Does not touch element classes
 function clearSurroundingBombs(x, y) {
 
     // Middle
@@ -251,19 +263,28 @@ function clearBlock(x, y) {
     }
 }
 
+// Show either an empty space or a bomb (Whether its flagged is irrelivant)
 function revealBlock(x, y) {
 
     block = document.getElementById(x + "/" + y);
 
     // Prevents death loops when revealSurroundings is called and finds empty blocks
-    runSurroundings = block.classList.contains("untouchedBlock");
+    // Only reveals surroundings if the block is completely untouched
+    neverHit = block.classList.contains("untouchedBlock");
 
     block.classList.remove("untouchedBlock");
+    
+    if (neverHit) {
+        unmarkedSpots -= 1;
+    }
 
     // Reveal bomb
     if(gridLayout[y][x]) {
 
         block.classList.add("bombBlock");
+        if (!gameOver) {
+            updateGame()
+        }
         return "bomb";
 
     // Reveal empty block
@@ -281,12 +302,14 @@ function revealBlock(x, y) {
 
         // Dont show count, and reveal surrounding area (If it hasnt been done yet)
         } else {
-            if (runSurroundings) {
+            if (neverHit) {
                 revealSurroundings(x, y);
-                uncoveredSpots += 1;
             }
         }
 
+        if (!gameOver) {
+            updateGame()
+        }
         return "none"
         
     }
@@ -330,6 +353,8 @@ function revealSurroundings(x, y) {
 
 function gameOver() {
 
+    console.log("Game over");
+    gameRunning = false;
     revealBoard()
 
 }
@@ -357,11 +382,11 @@ function resetGame() {
             block.classList.remove("flaggedBlock");
             block.innerHTML = "";
 
-            bombCount = 0;
-            flaggedSpots = 0;
-            uncoveredSpots = 0;
+            const area = xWidth * yWidth;
+            unmarkedSpots = area;
 
             firstClick = true;
+            gameRunning = true;
             
             block.classList.add("untouchedBlock");
             
