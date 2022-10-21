@@ -1,14 +1,21 @@
 
+// Globals
 
 // 20x20
 const xWidth = 20, yWidth = 20;
-
 let gameRunning = true;
 
 // Bad variable name (Each block's chance to be a bomb is 1 in bombFrequency)
 const bombFrequency = 8;
 
-// Run setup function
+// Grid data (Not fully tested/implemented)
+let bombCount = 0;
+let flaggedSpots = 0;
+let uncoveredSpots = 0;
+
+gridLayout = createBombGrid(xWidth, yWidth, bombFrequency);
+
+// Run setup function (For default setup)
 populateGrid(xWidth, yWidth);
 
 // Grid v2 uses flex box and divs
@@ -51,11 +58,6 @@ function populateGrid(xWidth, yWidth) {
 
 // Game mechanics
 
-const area = xWidth*yWidth;
-const bombCount = Math.floor(area/10);
-
-gridLayout = createBombGrid(xWidth, yWidth, bombFrequency);
-
 // Populate grid data
 function createBombGrid(width, height, bombRatio) {
 
@@ -67,7 +69,11 @@ function createBombGrid(width, height, bombRatio) {
 
         for(let x = 0; x<width; x++) {
 
-            row[x] = (Math.floor(Math.random()*bombFrequency) == 0);
+            isBomb = (Math.floor(Math.random()*bombFrequency) == 0);
+            if (isBomb) {
+                bombCount += 1;
+            }
+            row[x] = isBomb;
 
         }
 
@@ -145,6 +151,8 @@ function tileClick(clickType, x, y) {
         clickedBlock.classList.remove("untouchedBlock");
         clickedBlock.classList.add("flaggedBlock");
 
+        flaggedSpots += 1;
+
         return;
     }
 
@@ -161,6 +169,8 @@ function tileClick(clickType, x, y) {
         clickedBlock.classList.remove("flaggedBlock");
         clickedBlock.classList.add("untouchedBlock");
 
+        flaggedSpots -= 1;
+
     }
 
 }
@@ -172,27 +182,34 @@ function revealBlock(x, y) {
     block = document.getElementById(x + "/" + y);
 
     // Prevents death loops when revealSurroundings is called and finds empty blocks
-    if(!block.classList.contains("untouchedBlock")) {return "alreadyHit"}
     runSurroundings = block.classList.contains("untouchedBlock");
 
     block.classList.remove("untouchedBlock");
 
+    // Reveal bomb
     if(gridLayout[y][x]) {
 
         block.classList.add("bombBlock");
-        return "bomb"
+        return "bomb";
 
+    // Reveal empty block
     } else {
 
         block.classList.add("emptyBlock");
 
+        // Bomb count
         ajacentBombs = ajacentBombCount(x, y);
 
+        // Show count
         if(ajacentBombs>0) {
+
             block.innerHTML = ajacentBombs;
+
+        // Dont show count, and reveal surrounding area (If it hasnt been done yet)
         } else {
             if (runSurroundings) {
                 revealSurroundings(x, y);
+                uncoveredSpots += 1;
             }
         }
 
