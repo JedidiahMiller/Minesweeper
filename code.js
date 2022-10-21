@@ -4,21 +4,21 @@
 // 20x20
 const xWidth = 20, yWidth = 20;
 let gameRunning = true;
+let firstClick = true;
 
 // Bad variable name (Each block's chance to be a bomb is 1 in bombFrequency)
-const bombFrequency = 8;
+const bombFrequency = 6;
 
 // Grid data (Not fully tested/implemented)
 let bombCount = 0;
 let flaggedSpots = 0;
 let uncoveredSpots = 0;
 
-gridLayout = createBombGrid(xWidth, yWidth, bombFrequency);
-
 // Run setup function (For default setup)
 populateGrid(xWidth, yWidth);
 
 // Grid v2 uses flex box and divs
+// This creates the actual elements
 // Populate grid assumes no residue grid elements
 function populateGrid(xWidth, yWidth) {
         
@@ -60,7 +60,7 @@ function populateGrid(xWidth, yWidth) {
 
 // Populate grid data
 function createBombGrid(width, height, bombRatio) {
-
+    
     const gridLayout = [];
 
     for(let i = 0; i<height; i++) {
@@ -124,6 +124,7 @@ function ajacentBombCount(x, y) {
 
 // Gameplay
 
+// Void function
 function tileClick(clickType, x, y) {
 
     console.log(clickType + " click on " + x + "/" + y);
@@ -138,10 +139,35 @@ function tileClick(clickType, x, y) {
         return;
     }
 
+    // Remove flag (Should be done first)
+    if (clickedBlock.classList.contains("flaggedBlock")) {
+        
+        clickedBlock.classList.remove("flaggedBlock");
+        clickedBlock.classList.add("untouchedBlock");
+
+        flaggedSpots -= 1;
+
+        console.log("Removed flag");
+        return;
+    }
+
+    // First click
+    if ((clickType == "left") && (firstClick)) {
+        firstClick = false;
+        gridLayout = createBombGrid(xWidth, yWidth, bombFrequency);
+        clearSurroundingBombs(x, y);
+        revealBlock(x, y);
+
+        console.log("First click reveal");
+        return;
+    }
+
     // Bomb clicked
     if ((clickType == "left") && gridLayout[y][x]) {
         revealBlock(x, y);
         gameOver()
+
+        console.log("Bomb hit");
         return;
     }
 
@@ -153,6 +179,7 @@ function tileClick(clickType, x, y) {
 
         flaggedSpots += 1;
 
+        console.log("flag placed");
         return;
     }
 
@@ -160,22 +187,69 @@ function tileClick(clickType, x, y) {
 
     if ((clickType == "left") && !gridLayout[y][x]) {
         revealBlock(x, y);
+
+        console.log("normal click");
         return;
-    }
-
-    // Remove flag
-    if (clickedBlock.classList.contains("flaggedBlock")) {
-
-        clickedBlock.classList.remove("flaggedBlock");
-        clickedBlock.classList.add("untouchedBlock");
-
-        flaggedSpots -= 1;
-
     }
 
 }
 
+function clearSurroundingBombs(x, y) {
 
+    // Middle
+    clearBlock(x, y);
+
+    // Sides
+    if(y != 0) {
+        clearBlock(x, y-1);
+    }
+    if(x != (xWidth-1)) {
+        clearBlock(x+1, y);
+    }
+    if(y != (yWidth-1)) {
+        clearBlock(x, y+1);
+    }
+    if(x != 0) {
+        clearBlock(x-1, y);
+    }
+
+    // Farther sides
+    if(!(y <= 1)) {
+        clearBlock(x, y-2);
+    }
+    if(!(x >= (xWidth-3))) {
+        clearBlock(x+2, y);
+    }
+    if(!(y >= (yWidth-3))) {
+        clearBlock(x, y+2);
+    }
+    if(!(x <= 1)) {
+        clearBlock(x-2, y);
+    }
+
+    // corners
+    if((y != 0)&&(x != (xWidth-1))) {
+        clearBlock(x+1, y-1);
+    }
+    if((x != (xWidth-1))&&(y != (yWidth-1))) {
+        clearBlock(x+1, y+1);
+    }
+    if((y != (yWidth-1))&&(x != 0)) {
+        clearBlock(x-1, y+1);
+    }
+    if((x != 0)&&(y != 0)) {
+        clearBlock(x-1, y-1);
+    }
+
+}
+
+function clearBlock(x, y) {
+    // Only triggers if it actually is a bomb
+    if (gridLayout) {
+        bombCount -=1;
+        gridLayout[y][x] = false;
+    }
+}
 
 function revealBlock(x, y) {
 
@@ -283,6 +357,12 @@ function resetGame() {
             block.classList.remove("flaggedBlock");
             block.innerHTML = "";
 
+            bombCount = 0;
+            flaggedSpots = 0;
+            uncoveredSpots = 0;
+
+            firstClick = true;
+            
             block.classList.add("untouchedBlock");
             
         }
