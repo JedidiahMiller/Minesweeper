@@ -56,7 +56,7 @@ h1 {
 }
 
 .block:hover {
-    border: solid 0.5px greenyellow;
+    border: solid 0.5px darkgray;
 }
 
 .row {

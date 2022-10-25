@@ -224,6 +224,7 @@ function tileClick(clickType, block) {
 
     if ((clickType == "left") && !gridLayout[y][x]) {
         revealBlock(x, y);
+        updateGame();
 
         console.log("normal click");
         return;
