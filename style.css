@@ -13,7 +13,7 @@
 }
 
 .block {
-    border: solid 1px black;
+    border: solid 0.5px black;
     flex-grow: 1;
     background-size: contain;
     background-position: center;
@@ -44,7 +44,7 @@
 }
 
 .block:hover {
-    border: solid 1px greenyellow;
+    border: solid 0.5px greenyellow;
 }
 
 .row {
@@ -54,6 +54,7 @@
 }
 
 #allRows {
+    font-family: 'Courier New', Courier, monospace;
     display: flex;
     flex-direction: column;
     height: 700px;

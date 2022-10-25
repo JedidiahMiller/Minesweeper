@@ -5,10 +5,14 @@
 
 var mode = 1;
 
+// Game stats
+
+var timerInterval = 0;
+
 // 20x20
 var xWidth = 5, yWidth = 5;
 var gameRunning = true;
-var firstClick = true;
+var isFirstClick = true;
 
 // Bad variable name (Each block's chance to be a bomb is 1 in bombFrequency)
 const bombFrequency = 6;
@@ -16,14 +20,15 @@ const bombFrequency = 6;
 // Grid data (Not fully tested/implemented)
 var bombCount = 0;
 var unmarkedSpots = xWidth * yWidth;
+var gridLayout; 
 
 // Run setup function (For default setup)
-populateGrid(xWidth, yWidth);
+createBoard(xWidth, yWidth);
 
 // Grid v2 uses flex box and divs
 // This creates the actual elements
 // Populate grid assumes no residue grid elements
-function populateGrid(xWidth, yWidth) {
+function createBoard(xWidth, yWidth) {
         
     allRows = document.createElement("div");
     allRows.setAttribute("id", "allRows");
@@ -41,10 +46,10 @@ function populateGrid(xWidth, yWidth) {
             block.classList.add("block", "untouchedBlock")
 
             // regular click
-            block.onclick = function() { tileClick("left", x, y);}
+            block.onclick = function() {tileClick("left", block);}
 
             // right click
-            block.oncontextmenu = function() { tileClick("right", x, y); return false;}
+            block.oncontextmenu = function() { tileClick("right", block); return false;}
             
             row.appendChild(block);
 
@@ -64,7 +69,7 @@ function populateGrid(xWidth, yWidth) {
 // Populate grid data
 function createBombGrid(width, height, bombRatio) {
     
-    const gridLayout = [];
+    const layout = [];
 
     for(var i = 0; i<height; i++) {
 
@@ -80,12 +85,17 @@ function createBombGrid(width, height, bombRatio) {
 
         }
 
-        gridLayout[i] = row;
+        layout[i] = row;
 
     }
 
-    return gridLayout;
+    gridLayout = layout;
+  
+}
 
+function idToCoords(id) {
+    split = id.split("/");
+    return split;
 }
 
 // Count bombs
@@ -129,22 +139,37 @@ function ajacentBombCount(x, y) {
 
 function updateGame() {
 
-    console.log(unmarkedSpots + " spots left");
     if(unmarkedSpots == 0) {
         gameOver();
     }
 
 }
 
+function firstClick(x, y) {
+    isFirstClick = false;
+    createBombGrid(xWidth, yWidth, bombFrequency);
+    clearSurroundingBombs(x, y);
+    revealBlock(x, y);
+    startTimer();
+
+    console.log("First click reveal");
+}
+
 // Void function
-function tileClick(clickType, x, y) {
+function tileClick(clickType, block) {
     updateGame();
-    console.log(clickType + " click on " + x + "/" + y);
+    console.log(clickType + " click on " + block.id);
+    console.log(gridLayout);
 
     // If game isn't running, just ignore click
     if(!gameRunning) {return;} 
 
-    clickedBlock = document.getElementById(x + "/" + y);
+    clickedBlock = block;
+    
+    coords = idToCoords(clickedBlock.id);
+    x = parseInt(coords[0]);
+    y = parseInt(coords[1]);
+    console.log(coords);
 
     // Also ignore click if block is already revealed to be empty
     if (clickedBlock.classList.contains("emptyBlock")) {
@@ -165,13 +190,9 @@ function tileClick(clickType, x, y) {
     } 
 
     // First click
-    if ((clickType == "left") && (firstClick)) {
-        firstClick = false;
-        gridLayout = createBombGrid(xWidth, yWidth, bombFrequency);
-        clearSurroundingBombs(x, y);
-        revealBlock(x, y);
+    if ((clickType == "left") && (isFirstClick)) {
 
-        console.log("First click reveal");
+        firstClick(x, y);
         return;
     }
 
@@ -261,7 +282,7 @@ function clearSurroundingBombs(x, y) {
 
 function clearBlock(x, y) {
     // Only triggers if it actually is a bomb
-    if (gridLayout) {
+    if (gridLayout[y][x]) {
         bombCount -=1;
         gridLayout[y][x] = false;
     }
@@ -359,7 +380,8 @@ function gameOver() {
 
     console.log("Game over");
     gameRunning = false;
-    revealBoard()
+    revealBoard();
+    stopTimer();
 
 }
 
@@ -381,7 +403,7 @@ function setGameMode(difficulty) {
     mode = difficulty;
     destroyBoard();
     xWidth = yWidth = (difficulty*10);
-    populateGrid(xWidth, yWidth);
+    createBoard(xWidth, yWidth);
 
 }
 
@@ -392,6 +414,7 @@ function destroyBoard() {
     while (block.firstChild) {
         block.removeChild(block.firstChild);
     }
+
 }
 
 function resetGame() {
@@ -407,12 +430,27 @@ function resetGame() {
 
             const area = xWidth * yWidth;
             unmarkedSpots = area;
+            stopTimer();
 
-            firstClick = true;
+            isFirstClick = true;
             gameRunning = true;
             
             block.classList.add("untouchedBlock");
             
         }
     }
+}
+
+function startTimer() {
+    var start = Date.now();
+    timerInterval = setInterval(function() {
+        var delta = Date.now() - start;
+        timerElement = document.getElementById("timer");
+        time = Math.floor(delta / 1000);
+        timerElement.innerHTML = time;
+    }, 1000)
+}
+
+function stopTimer() {
+    window.clearInterval(timerInterval);
 }
