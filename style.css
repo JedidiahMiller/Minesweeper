@@ -6,6 +6,7 @@
     margin: auto;
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
 #titleSplash #controls {
@@ -63,4 +64,31 @@
     border: solid 10px darkred;
     border-radius: 10px;
     background-color: green;
+}
+
+#gameMode {
+    display: flex;
+}
+
+.gameModeButton {
+
+}
+.gameModeButtonSelected {
+    background-color: brown;
+}
+
+button {
+    border: none;
+    background-color: darkgray;
+    color: maroon;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;   
+}
+
+#controls {
+    display: flex;
 }

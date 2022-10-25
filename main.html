@@ -11,13 +11,13 @@
                 <h1>Minesweeper</h1>
             </div>
             <div id="controls">
-                <button onclick="resetGame()">Reset</button>
-                <div id="gameMode">
-                    <button id="1" onclick="setGameMode(1)">Easy</button>
-                    <button id="2" onclick="setGameMode(2)">Medium</button>
-                    <button id="3" onclick="setGameMode(3)">Hard</button>
+                <button onclick="resetGame()" class="controlItem">Reset</button>
+                <div id="gameMode" class="controlItem">
+                    <button id="mode1" onclick="setGameMode(1)">Easy</button>
+                    <button id="mode2" onclick="setGameMode(2)">Medium</button>
+                    <button id="mode3" onclick="setGameMode(3)">Hard</button>
                 </div>
-                <div id="timer"></div>
+                <div id="timer" class="controlItem"></div>
             </div>
         </div>
         <div id="board">

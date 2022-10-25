@@ -10,7 +10,7 @@ var mode = 1;
 var timerInterval = 0;
 
 // 20x20
-var xWidth = 5, yWidth = 5;
+var xWidth = 10, yWidth = 10;
 var gameRunning = true;
 var isFirstClick = true;
 
@@ -24,6 +24,7 @@ var gridLayout;
 
 // Run setup function (For default setup)
 createBoard(xWidth, yWidth);
+setGameMode(1);
 
 // Grid v2 uses flex box and divs
 // This creates the actual elements
@@ -399,6 +400,13 @@ function revealBoard() {
 
 function setGameMode(difficulty) {
 
+    button = document.getElementById("mode" + difficulty);
+    allButtons = document.getElementById("gameMode").childNodes;
+    for(var i = 1; i<=3;i+=1) {
+        b = document.getElementById("mode" + i);
+        b.classList.remove("gameModeButtonSelected");
+    }
+    button.classList.add("gameModeButtonSelected");
     resetGame();
     mode = difficulty;
     destroyBoard();
@@ -447,7 +455,10 @@ function startTimer() {
         var delta = Date.now() - start;
         timerElement = document.getElementById("timer");
         time = Math.floor(delta / 1000);
-        timerElement.innerHTML = time;
+        min = Math.floor(time/60);
+        sec = time%60;
+        if (sec<10) {sec = "0" + sec;}
+        timerElement.innerHTML = min + ":" + sec;
     }, 1000)
 }
 
