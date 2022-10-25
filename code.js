@@ -1,17 +1,21 @@
 
 // Globals
 
+// Game settings
+
+var mode = 1;
+
 // 20x20
-const xWidth = 5, yWidth = 5;
-let gameRunning = true;
-let firstClick = true;
+var xWidth = 5, yWidth = 5;
+var gameRunning = true;
+var firstClick = true;
 
 // Bad variable name (Each block's chance to be a bomb is 1 in bombFrequency)
 const bombFrequency = 6;
 
 // Grid data (Not fully tested/implemented)
-let bombCount = 0;
-let unmarkedSpots = xWidth * yWidth;
+var bombCount = 0;
+var unmarkedSpots = xWidth * yWidth;
 
 // Run setup function (For default setup)
 populateGrid(xWidth, yWidth);
@@ -24,13 +28,13 @@ function populateGrid(xWidth, yWidth) {
     allRows = document.createElement("div");
     allRows.setAttribute("id", "allRows");
 
-    for(let y=0; y<yWidth; y++) {
+    for(var y=0; y<yWidth; y++) {
 
         const row = document.createElement("div");
         row.setAttribute("id", "row"+y);
         row.classList.add("row");
 
-        for(let x=0; x<xWidth; x++) {
+        for(var x=0; x<xWidth; x++) {
 
             const block = document.createElement("div");
             block.setAttribute("id", x + "/" + y);
@@ -62,11 +66,11 @@ function createBombGrid(width, height, bombRatio) {
     
     const gridLayout = [];
 
-    for(let i = 0; i<height; i++) {
+    for(var i = 0; i<height; i++) {
 
         const row = [];
 
-        for(let x = 0; x<width; x++) {
+        for(var x = 0; x<width; x++) {
 
             isBomb = (Math.floor(Math.random()*bombFrequency) == 0);
             if (isBomb) {
@@ -361,8 +365,8 @@ function gameOver() {
 
 function revealBoard() {
     
-    for(let y = 0; y < yWidth; y += 1) {
-        for(let x = 0; x < xWidth; x += 1) {
+    for(var y = 0; y < yWidth; y += 1) {
+        for(var x = 0; x < xWidth; x += 1) {
             revealBlock(x, y);
         }
     }
@@ -371,9 +375,28 @@ function revealBoard() {
 
 // Control panel
 
+function setGameMode(difficulty) {
+
+    resetGame();
+    mode = difficulty;
+    destroyBoard();
+    xWidth = yWidth = (difficulty*10);
+    populateGrid(xWidth, yWidth);
+
+}
+
+function destroyBoard() {
+
+    block = document.getElementById("board");
+    
+    while (block.firstChild) {
+        block.removeChild(block.firstChild);
+    }
+}
+
 function resetGame() {
-    for(let y = 0; y < yWidth; y += 1) {
-        for(let x = 0; x < xWidth; x += 1) {
+    for(var y = 0; y < yWidth; y += 1) {
+        for(var x = 0; x < xWidth; x += 1) {
 
             block = document.getElementById(x + "/" + y);
 
