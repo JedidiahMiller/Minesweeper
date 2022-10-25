@@ -6,22 +6,24 @@
         <script src="code.js" defer></script>
     </head>
     <body>
-        <div id="controlPanel">
-            <div id="titleSplash">
-                <h1>Minesweeper</h1>
-            </div>
-            <div id="controls">
-                <button onclick="resetGame()" class="controlItem">Reset</button>
-                <div id="gameMode" class="controlItem">
-                    <button id="mode1" onclick="setGameMode(1)">Easy</button>
-                    <button id="mode2" onclick="setGameMode(2)">Medium</button>
-                    <button id="mode3" onclick="setGameMode(3)">Hard</button>
+        <div id="game">
+            <div id="controlPanel">
+                <div id="titleSplash">
+                    <h1>Minesweeper</h1>
                 </div>
-                <div id="timer" class="controlItem"></div>
+                <div id="controls">
+                    <button onclick="resetGame()" id="reset" class="controlItem">Reset</button>
+                    <div id="gameMode" class="controlItem">
+                        <button id="mode1" onclick="setGameMode(1)">Easy</button>
+                        <button id="mode2" onclick="setGameMode(2)">Medium</button>
+                        <button id="mode3" onclick="setGameMode(3)">Hard</button>
+                    </div>
+                    <div id="timer" class="controlItem">0:00</div>
+                </div>
             </div>
-        </div>
-        <div id="board">
-            <!--Div automatically populated-->
+            <div id="board">
+                <!--Div automatically populated-->
+            </div>
         </div>
     </body>
 </html>

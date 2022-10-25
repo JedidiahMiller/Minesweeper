@@ -439,6 +439,7 @@ function resetGame() {
             const area = xWidth * yWidth;
             unmarkedSpots = area;
             stopTimer();
+            resetTimer();
 
             isFirstClick = true;
             gameRunning = true;
@@ -464,4 +465,9 @@ function startTimer() {
 
 function stopTimer() {
     window.clearInterval(timerInterval);
+}
+
+function resetTimer() {
+    timerElement = document.getElementById("timer");
+    timerElement.innerHTML = "0:00";
 }
