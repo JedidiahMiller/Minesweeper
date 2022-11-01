@@ -52,7 +52,7 @@ h1 {
 }
 
 .bombBlock {
-    background-image: url(Images/bomb.svg);
+    background-image: url(Media/bomb.svg);
 }
 
 .block:hover {

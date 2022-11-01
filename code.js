@@ -14,10 +14,9 @@ var xWidth = 10, yWidth = 10;
 var gameRunning = true;
 var isFirstClick = true;
 
-// Bad variable name (Each block's chance to be a bomb is 1 in bombFrequency)
 const bombFrequency = 6;
 
-// Grid data (Not fully tested/implemented)
+// Grid data
 var bombCount = 0;
 var unmarkedSpots = xWidth * yWidth;
 var gridLayout; 
@@ -472,3 +471,4 @@ function resetTimer() {
     timerElement = document.getElementById("timer");
     timerElement.innerHTML = "0:00";
 }
+
